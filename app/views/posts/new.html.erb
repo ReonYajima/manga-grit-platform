@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>新規投稿 - <%= @genre.name %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="h2">新規投稿</h1>
+        <p class="text-muted">ジャンル: <%= @genre.name %></p>
+      </div>
+      <div>
+        <%= link_to "← 戻る", @genre, class: "btn btn-outline-secondary" %>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <%= form_with(model: [@genre, @post], local: true) do |form| %>
+              <% if @post.errors.any? %>
+                <div class="alert alert-danger">
+                  <h5><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h5>
+                  <ul class="mb-0">
+                    <% @post.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
+
+              <div class="mb-3">
+                <%= form.label :manga_title, "マンガタイトル", class: "form-label" %>
+                <%= form.text_field :manga_title, class: "form-control", placeholder: "例: ONE PIECE" %>
+              </div>
+
+              <div class="mb-3">
+                <%= form.label :content, "投稿内容", class: "form-label" %>
+                <%= form.text_area :content, rows: 8, class: "form-control", 
+                    placeholder: "印象に残ったシーンやセリフ、そこから学んだことを書いてください..." %>
+                <div class="form-text">最低10文字以上入力してください</div>
+              </div>
+
+              <div class="mb-4">
+                <%= form.label :tag_list, "タグ", class: "form-label" %>
+                <%= form.text_field :tag_list, class: "form-control", 
+                    placeholder: "例: 努力, 継続, 成長 (カンマで区切って入力)" %>
+                <div class="form-text">関連するキーワードをカンマ区切りで入力してください</div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <%= form.submit "投稿する", class: "btn btn-primary me-md-2" %>
+                <%= link_to "キャンセル", @genre, class: "btn btn-outline-secondary" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
