@@ -14,11 +14,9 @@
       <div>
         <% if @post.user == current_user %>
           <%= link_to "編集", edit_genre_post_path(@post.genre, @post), class: "btn btn-outline-primary me-2" %>
-          <%= link_to "削除", [@post.genre, @post], 
-              data: { 
-                turbo_method: :delete, 
-                turbo_confirm: "本当に削除しますか?" 
-              }, 
+          <%= button_to "削除", [@post.genre, @post],
+              method: :delete,
+              form: { data: { turbo_confirm: "本当に削除しますか?" } },
               class: "btn btn-outline-danger" %>
         <% end %>
       </div>
@@ -54,12 +52,15 @@
         <div class="card mt-3">
           <div class="card-body text-center">
             <% if @post.liked_by?(current_user) %>
-              <%= link_to post_like_path(@post, @post.likes.find_by(user: current_user)), 
-                  data: { turbo_method: :delete }, class: "btn btn-danger" do %>
+              <%= button_to post_like_path(@post, @post.likes.find_by(user: current_user)),
+                  method: :delete,
+                  class: "btn btn-danger" do %>
                 ❤️ いいね済み (<%= @post.likes_count %>)
               <% end %>
             <% else %>
-              <%= link_to post_likes_path(@post), data: { turbo_method: :post }, class: "btn btn-outline-danger" do %>
+              <%= button_to post_likes_path(@post),
+                  method: :post,
+                  class: "btn btn-outline-danger" do %>
                 🤍 いいね (<%= @post.likes_count %>)
               <% end %>
             <% end %>
@@ -82,11 +83,9 @@
                   </div>
                   <p class="mb-1" style="white-space: pre-wrap;"><%= comment.content %></p>
                   <% if comment.user == current_user %>
-                    <%= link_to "削除", [@post, comment], 
-                        data: { 
-                          turbo_method: :delete, 
-                          turbo_confirm: "本当に削除しますか?" 
-                        }, 
+                    <%= button_to "削除", [@post, comment],
+                        method: :delete,
+                        form: { data: { turbo_confirm: "本当に削除しますか?" } },
                         class: "btn btn-sm btn-outline-danger" %>
                   <% end %>
                 </div>
@@ -97,7 +96,7 @@
 
             <%= form_with(model: [@post, @comment], local: true) do |form| %>
               <div class="mt-3">
-                <%= form.text_area :content, rows: 3, class: "form-control mb-2", 
+                <%= form.text_area :content, rows: 3, class: "form-control mb-2",
                     placeholder: "コメントを入力..." %>
                 <%= form.submit "コメント投稿", class: "btn btn-primary btn-sm" %>
               </div>
