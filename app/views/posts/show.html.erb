@@ -14,10 +14,9 @@
       <div>
         <% if @post.user == current_user %>
           <%= link_to "編集", edit_genre_post_path(@post.genre, @post), class: "btn btn-outline-primary me-2" %>
-          <%= button_to "削除", [@post.genre, @post],
-              method: :delete,
-              form: { data: { turbo_confirm: "本当に削除しますか?" } },
-              class: "btn btn-outline-danger" %>
+          <%= form_with url: [@post.genre, @post], method: :delete, local: true, style: "display: inline;" do %>
+            <%= submit_tag "削除", data: { confirm: "本当に削除しますか?" }, class: "btn btn-outline-danger" %>
+          <% end %>
         <% end %>
       </div>
     </div>
@@ -52,16 +51,12 @@
         <div class="card mt-3">
           <div class="card-body text-center">
             <% if @post.liked_by?(current_user) %>
-              <%= button_to post_like_path(@post, @post.likes.find_by(user: current_user)),
-                  method: :delete,
-                  class: "btn btn-danger" do %>
-                ❤️ いいね済み (<%= @post.likes_count %>)
+              <%= form_with url: post_like_path(@post, @post.likes.find_by(user: current_user)), method: :delete, local: true, style: "display: inline;" do %>
+                <%= submit_tag "❤️ いいね済み (#{@post.likes_count})", class: "btn btn-danger" %>
               <% end %>
             <% else %>
-              <%= button_to post_likes_path(@post),
-                  method: :post,
-                  class: "btn btn-outline-danger" do %>
-                🤍 いいね (<%= @post.likes_count %>)
+              <%= form_with url: post_likes_path(@post), method: :post, local: true, style: "display: inline;" do %>
+                <%= submit_tag "🤍 いいね (#{@post.likes_count})", class: "btn btn-outline-danger" %>
               <% end %>
             <% end %>
           </div>
@@ -83,10 +78,9 @@
                   </div>
                   <p class="mb-1" style="white-space: pre-wrap;"><%= comment.content %></p>
                   <% if comment.user == current_user %>
-                    <%= button_to "削除", [@post, comment],
-                        method: :delete,
-                        form: { data: { turbo_confirm: "本当に削除しますか?" } },
-                        class: "btn btn-sm btn-outline-danger" %>
+                    <%= form_with url: [@post, comment], method: :delete, local: true, style: "display: inline;" do %>
+                      <%= submit_tag "削除", data: { confirm: "本当に削除しますか?" }, class: "btn btn-sm btn-outline-danger" %>
+                    <% end %>
                   <% end %>
                 </div>
               <% end %>
@@ -109,3 +103,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

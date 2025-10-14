@@ -13,22 +13,29 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password: Reonegi0813
-  host: localhost
   ssl_mode: disabled
   sslverify: false
 
 development:
-  <<: *default
-  database: manga_grit_platform_mysql_development
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  database: <%= ENV["MYSQL_DATABASE"] %>
+  username: <%= ENV["DB_USER"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  host: <%= ENV["DB_HOST"] %>
+  port: 3306
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: manga_grit_platform_mysql_test
+  database: manga_grit_platform_test
+  username: <%= ENV["DB_USER"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  host: <%= ENV["DB_HOST"] %>
+  port: 3306
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -52,6 +59,7 @@ test:
 #
 production:
   <<: *default
-  database: manga_grit_platform_mysql_production
-  username: manga_grit_platform_mysql
-  password: <%= ENV["MANGA_GRIT_PLATFORM_MYSQL_DATABASE_PASSWORD"] %>
+  database: <%= ENV["MYSQL_DATABASE"] %>
+  username: <%= ENV["DB_USER"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  host: <%= ENV["DB_HOST"] %>
