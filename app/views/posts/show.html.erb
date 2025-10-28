@@ -42,6 +42,15 @@
               </div>
             <% end %>
 
+            <!-- 画像表示 -->
+            <% if @post.image.attached? %>
+              <div class="mb-4">
+                <%= image_tag url_for(@post.image), 
+                    class: "img-fluid rounded", 
+                    style: "max-height: 600px; width: 100%; object-fit: contain; background-color: #f8f9fa;" %>
+              </div>
+            <% end %>
+
             <div class="card-text">
               <p style="white-space: pre-wrap; line-height: 1.8;"><%= @post.content %></p>
             </div>
@@ -103,4 +112,3 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

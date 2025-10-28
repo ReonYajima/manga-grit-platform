@@ -44,6 +44,33 @@
                 <div class="form-text">最低10文字以上入力してください</div>
               </div>
 
+              <!-- 既存画像の表示と削除 -->
+              <% if @post.image.attached? %>
+                <div class="mb-3">
+                  <label class="form-label">現在の画像</label>
+                  <div>
+                    <%= image_tag url_for(@post.image), 
+                        class: "img-thumbnail", 
+                        style: "max-width: 300px; max-height: 300px; object-fit: cover;" %>
+                    <div class="form-check mt-2">
+                      <%= check_box_tag "post[remove_image]", "1", false, 
+                          class: "form-check-input", id: "remove_image" %>
+                      <%= label_tag "remove_image", "この画像を削除", 
+                          class: "form-check-label text-danger" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- 新しい画像アップロード -->
+              <div class="mb-3">
+                <%= form.label :image, "画像を変更（1枚、5MBまで）", class: "form-label" %>
+                <%= form.file_field :image, accept: "image/*", 
+                    class: "form-control", id: "image-upload" %>
+                <div class="form-text">新しい画像をアップロードできます（PNG, JPEG, GIF）</div>
+                <div id="image-preview" class="mt-2"></div>
+              </div>
+
               <div class="mb-4">
                 <%= form.label :tag_list, "タグ", class: "form-label" %>
                 <%= form.text_field :tag_list, class: "form-control", 
@@ -61,6 +88,36 @@
       </div>
     </div>
   </div>
+
+  <script>
+  document.getElementById('image-upload').addEventListener('change', function(e) {
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    
+    if (this.files && this.files[0]) {
+      const file = this.files[0];
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert(file.name + ' は5MBを超えています');
+        this.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'img-thumbnail';
+        img.style.maxWidth = '300px';
+        img.style.maxHeight = '300px';
+        img.style.objectFit = 'cover';
+        preview.appendChild(img);
+      }
+      reader.readAsDataURL(file);
+    }
+  });
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

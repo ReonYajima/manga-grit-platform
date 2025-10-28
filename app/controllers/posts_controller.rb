@@ -47,6 +47,11 @@ class PostsController < ApplicationController
       return
     end
 
+    # 既存画像の削除処理
+    if params[:post][:remove_image] == "1"
+      @post.image.purge if @post.image.attached?
+    end 
+
     if @post.update(post_params)
       # 更新成功時は投稿詳細画面にリダイレクト
       redirect_to [@post.genre, @post], notice: '投稿が更新されました。'
@@ -84,6 +89,6 @@ class PostsController < ApplicationController
 
   # 投稿作成・更新で許可するパラメータ
   def post_params
-    params.require(:post).permit(:manga_title, :content, :tag_list)
+    params.require(:post).permit(:manga_title, :content, :tag_list, :image)
   end
 end
