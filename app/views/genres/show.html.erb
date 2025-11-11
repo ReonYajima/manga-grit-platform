@@ -4,23 +4,44 @@
   <title><%= @genre.name %> - マンガグリットプラットフォーム</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </head>
 <body>
-  <div class="container mt-4">
-    <!-- ヘッダー部分 -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1 class="h2"><%= @genre.name %></h1>
-        <p class="text-muted"><%= @genre.description %></p>
-      </div>
-      <div>
-        <%= link_to "← 成長テーマ選択に戻る", root_path, class: "btn btn-outline-secondary" %>
+  <!-- ナビゲーションバー -->
+  <nav class="navbar navbar-light bg-light shadow-sm mb-4">
+    <div class="container">
+      <%= link_to root_path, class: "navbar-brand d-flex align-items-center text-decoration-none" do %>
+        <i class="bi bi-book-fill text-primary me-2" style="font-size: 1.5rem;"></i>
+        <span class="fw-bold">マンガグリットプラットフォーム</span>
+      <% end %>
+      <div class="d-flex align-items-center">
+        <%= link_to mypage_path, class: "btn btn-outline-primary btn-sm me-2" do %>
+          <i class="bi bi-person-circle"></i> マイページ
+        <% end %>
+        <%= link_to root_path, class: "btn btn-outline-secondary btn-sm" do %>
+          <i class="bi bi-house"></i> ホーム
+        <% end %>
       </div>
     </div>
+  </nav>
 
-    <!-- 新規投稿ボタン -->
-    <div class="text-center mb-4">
-      <%= link_to "新規投稿", new_genre_post_path(@genre), class: "btn btn-primary btn-lg" %>
+  <div class="container mt-4">
+    <!-- ヘッダー部分 -->
+    <div class="mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="h2 mb-2">
+            <span class="badge bg-primary me-2"><%= @genre.name %></span>
+          </h1>
+          <p class="text-muted mb-0"><%= @genre.description %></p>
+        </div>
+        <div>
+          <%= link_to new_genre_post_path(@genre), class: "btn btn-primary" do %>
+            <i class="bi bi-plus-circle"></i> 新規投稿
+          <% end %>
+        </div>
+      </div>
     </div>
 
     <!-- 投稿一覧 -->
@@ -38,12 +59,12 @@
                 <% else %>
                   <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
                        style="height: 200px;">
-                    <span class="text-muted">📚 画像なし</span>
+                    <span class="text-muted fs-1">📚</span>
                   </div>
                 <% end %>
 
                 <div class="card-body">
-                  <h5 class="card-title text-primary"><%= post.manga_title %></h5>
+                  <h5 class="card-title text-primary text-truncate"><%= post.manga_title %></h5>
                   <p class="card-text text-muted small mb-2">
                     <%= truncate(post.content, length: 100) %>
                   </p>
@@ -62,10 +83,12 @@
                   
                   <!-- 投稿者情報 -->
                   <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">by <%= post.user.display_name %></small>
                     <small class="text-muted">
-                      ❤️ <%= post.likes_count %> 
-                      💬 <%= post.comments.count %>
+                      <i class="bi bi-person"></i> <%= post.user.display_name %>
+                    </small>
+                    <small class="text-muted">
+                      <i class="bi bi-heart-fill text-danger"></i> <%= post.likes_count %> 
+                      <i class="bi bi-chat-fill text-success ms-2"></i> <%= post.comments.count %>
                     </small>
                   </div>
                 </div>
@@ -78,9 +101,12 @@
         <div class="col-12 text-center">
           <div class="card">
             <div class="card-body py-5">
+              <div class="display-1 text-muted mb-3">📝</div>
               <h5 class="card-title text-muted">まだ投稿がありません</h5>
               <p class="card-text">最初の投稿を作成してみましょう！</p>
-              <%= link_to "新規投稿", new_genre_post_path(@genre), class: "btn btn-primary" %>
+              <%= link_to new_genre_post_path(@genre), class: "btn btn-primary" do %>
+                <i class="bi bi-plus-circle"></i> 新規投稿
+              <% end %>
             </div>
           </div>
         </div>
@@ -88,9 +114,11 @@
     </div>
 
     <!-- ページネーション -->
-    <% if @posts.respond_to?(:current_page) %>
-      <div class="d-flex justify-content-center mt-4">
-        <%= paginate @posts %>
+    <% if @posts.respond_to?(:current_page) && @posts.total_pages > 1 %>
+      <div class="d-flex justify-content-center mt-4 mb-5">
+        <%= paginate @posts, 
+            previous_label: '← 前へ',
+            next_label: '次へ →' %>
       </div>
     <% end %>
   </div>
@@ -104,6 +132,46 @@
     .hover-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+    }
+
+    /* ページネーションのスタイル */
+    .pagination {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+      margin: 0;
+      display: inline-flex;
+      gap: 0.5rem;  /* ボタン間の間隔 */
+    }
+    
+    .pagination .page-link {
+      color: #667eea;
+      border: none;
+      padding: 0.75rem 1.5rem;  /* 上下0.75rem、左右1.5rem */
+      margin: 0;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-size: 1.1rem;  /* 少し大きめ */
+      min-width: 3rem;  /* 最小幅を設定して押しやすく */
+    }
+    
+    .pagination .page-link:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .pagination .page-item.active .page-link {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+    }
+    
+    .pagination .page-item.disabled .page-link {
+      color: #ccc;
+      background: transparent;
     }
   </style>
 </body>

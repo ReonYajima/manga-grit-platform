@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   # 新規登録の前に利用規約ページへリダイレクト
   get 'signup', to: 'pages#signup_redirect'
 
+  # マイページ
+  get 'mypage', to: 'users#show', as: 'mypage'
+
   # ジャンル関連のルーティング
   resources :genres, only: [ :index, :show ] do
     # ジャンル内での投稿関連ルーティング
