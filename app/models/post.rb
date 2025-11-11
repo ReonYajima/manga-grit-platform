@@ -9,8 +9,15 @@ class Post < ApplicationRecord
   # 画像の関連付け（1投稿に1枚のみ）
   has_one_attached :image
   
-  validates :manga_title, presence: true
+  # 基本バリデーション
+  validates :manga_title, presence: { message: "マンガタイトルは必須です" }
   validates :content, presence: true, length: { minimum: 10 }
+  
+  # 出典情報のバリデーション（画像がある場合のみ必須）
+  validates :manga_author, presence: { message: "著者名は必須です" }, if: :image_attached?
+  validates :manga_publisher, presence: { message: "出版社は必須です" }, if: :image_attached?
+  validates :manga_volume, presence: { message: "巻数は必須です" }, if: :image_attached?
+  validates :manga_page, presence: { message: "ページ数は必須です" }, if: :image_attached?
   
   # 画像のバリデーション
   validate :acceptable_image
@@ -24,7 +31,17 @@ class Post < ApplicationRecord
     likes.count
   end
   
+  # 出典情報の整形表示
+  def formatted_citation
+    return nil unless image.attached?
+    "#{manga_author}『#{manga_title}』第#{manga_volume}巻、#{manga_publisher}、p.#{manga_page}"
+  end
+  
   private
+  
+  def image_attached?
+    image.attached?
+  end
 
   def acceptable_image
     return unless image.attached?

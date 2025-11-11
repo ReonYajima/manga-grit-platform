@@ -5,6 +5,12 @@ Rails.application.routes.draw do
   # トップページをジャンル一覧に設定
   root "genres#index"
 
+  # 利用規約ページ（サインアップ前に必ず表示）
+  get 'terms', to: 'pages#terms'
+  
+  # 新規登録の前に利用規約ページへリダイレクト
+  get 'signup', to: 'pages#signup_redirect'
+
   # ジャンル関連のルーティング
   resources :genres, only: [ :index, :show ] do
     # ジャンル内での投稿関連ルーティング

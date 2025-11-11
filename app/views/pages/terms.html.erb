@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>利用規約 - マンガグリットプラットフォーム</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5 mb-5">
+    <h1 class="mb-4">利用規約</h1>
+    
+    <div class="alert alert-info">
+      <strong>研究目的の利用について</strong><br>
+      本プラットフォームは東京情報大学の卒業研究として運営されています。
+    </div>
+
+    <h2>1. 本プラットフォームについて</h2>
+    <p>
+      本プラットフォームは、東京情報大学総合情報学部ゲームアプリケーション研究室
+      における卒業研究の一環として、
+      <strong>著作権法第35条（学校その他の教育機関における複製等）</strong>
+      に基づき運営されています。
+    </p>
+    
+    <h2>2. 利用対象者</h2>
+    <p>
+      本プラットフォームは、当該ゼミに所属する学生および指導教員のみが利用できます。
+      <strong>ゼミ参加パスワード</strong>を知っている方のみが登録可能です。
+    </p>
+    
+    <h2>3. 著作物の利用について</h2>
+    <ul>
+      <li><strong>投稿できる画像は1投稿につき1コマのみです</strong></li>
+      <li><strong>出典（著者名、作品名、出版社、巻数、ページ数）の明記が必須です</strong></li>
+      <li>授業目的（研究目的）での利用に限ります</li>
+      <li>商業目的での利用は禁止されています</li>
+      <li>本プラットフォーム外への無断転載・二次利用は固く禁じられています</li>
+    </ul>
+
+    <h3>3.1 投稿内容のガイドライン</h3>
+    <p>
+      投稿は、卒業研究テーマ「マンガを用いたグリット向上」に関連する内容である必要があります。
+    </p>
+
+    <h4>✅ 良い投稿例</h4>
+    <ul>
+      <li>「このシーンの努力描写が印象的で、継続する意欲が高まった」</li>
+      <li>「困難を乗り越える姿勢に共感し、自分も頑張ろうと思った」</li>
+      <li>「目標に向かう一貫性が描かれており、グリットを感じた」</li>
+    </ul>
+
+    <h4>❌ 不適切な投稿例</h4>
+    <ul>
+      <li>「かっこいい」のみ（研究との関連性が不明）</li>
+      <li>「面白い」のみ（グリット向上との関係が説明されていない）</li>
+      <li>ストーリーのネタバレのみ（研究目的ではない）</li>
+    </ul>
+    
+    <h2>4. 利用期間</h2>
+    <p>
+      本プラットフォームは卒業研究期間中（2025年11月〜2026年3月）のみ利用可能です。
+      期間終了後はアクセスが制限されます。
+    </p>
+    
+    <h2>5. 補償金制度</h2>
+    <p>
+      東京情報大学は、一般社団法人授業目的公衆送信補償金等管理協会（SARTRAS）に
+      補償金を支払っており、授業目的での公衆送信が認められています。
+    </p>
+    
+    <div class="alert alert-warning mt-4">
+      <strong>重要：</strong>
+      本プラットフォームからの画像の無断転載・二次利用は固く禁じられています。
+      投稿内容は研究目的であることが明確に説明できる必要があります。
+      指導教員が不適切と判断した場合、削除される可能性があります。
+    </div>
+
+    <!-- ボタンを常に表示 -->
+    <% if params[:from_signup] %>
+      <div class="mt-5 text-center">
+        <%= link_to "同意して登録を続ける", new_user_registration_path(terms_agreed: true), 
+            class: "btn btn-primary btn-lg" %>
+        <br>
+        <small class="text-muted mt-2 d-block">
+          同意いただけない場合は登録できません
+        </small>
+      </div>
+    <% end %>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

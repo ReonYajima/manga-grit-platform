@@ -8,9 +8,10 @@ class ApplicationController < ActionController::Base
   private
   
   def configure_permitted_parameters
-    # ユーザー登録時に username と display_name を許可
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :display_name])
-    # アカウント更新時に username と display_name を許可
+    # ユーザー登録時（emailを削除）
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :display_name, :seminar_password, :terms_agreed])
+    
+    # アカウント更新時
     devise_parameter_sanitizer.permit(:account_update, keys: [:username, :display_name])
   end
 end

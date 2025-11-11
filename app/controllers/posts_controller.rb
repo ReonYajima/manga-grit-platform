@@ -89,6 +89,15 @@ class PostsController < ApplicationController
 
   # 投稿作成・更新で許可するパラメータ
   def post_params
-    params.require(:post).permit(:manga_title, :content, :tag_list, :image)
+  params.require(:post).permit(
+    :manga_title, 
+    :content, 
+    :tag_list, 
+    :image,
+    :manga_author,
+    :manga_publisher,
+    :manga_volume,
+    :manga_page
+  )
   end
 end

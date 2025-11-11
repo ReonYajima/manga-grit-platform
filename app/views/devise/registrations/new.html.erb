@@ -1,39 +1,79 @@
-<h2>Sign up</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>新規登録 - マンガグリットプラットフォーム</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-body p-5">
+            <h2 class="text-center mb-4">新規登録</h2>
+            
+            <div class="alert alert-success mb-4">
+              <strong>利用規約に同意済み</strong><br>
+              ゼミ参加パスワードを入力して登録してください。
+            </div>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+            <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+              <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+              <!-- 利用規約同意を自動でONにする（非表示） -->
+              <%= f.hidden_field :terms_agreed, value: '1' %>
+
+              <div class="mb-3">
+                <%= f.label :username, "ユーザー名（必須）", class: "form-label" %>
+                <%= f.text_field :username, autofocus: true, class: "form-control", 
+                    placeholder: "例: yamada_taro" %>
+                <small class="text-muted">ログイン時に使用します（半角英数字）</small>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :display_name, "表示名（必須）", class: "form-label" %>
+                <%= f.text_field :display_name, class: "form-control", 
+                    placeholder: "例: 山田太郎" %>
+                <small class="text-muted">他のユーザーに表示される名前です</small>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :seminar_password, "ゼミ参加パスワード（必須）", class: "form-label" %>
+                <%= f.password_field :seminar_password, class: "form-control", 
+                    placeholder: "ゼミで配布されたパスワード" %>
+                <small class="text-muted">
+                  ⚠️ ゼミ生のみ参加可能です。パスワードは矢島から配布されます。
+                </small>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :password, "ログインパスワード（必須）", class: "form-label" %>
+                <small class="text-muted">（6文字以上）</small>
+                <%= f.password_field :password, autocomplete: "new-password", class: "form-control",
+                    placeholder: "6文字以上" %>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :password_confirmation, "パスワード確認（必須）", class: "form-label" %>
+                <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control",
+                    placeholder: "もう一度入力" %>
+              </div>
+
+              <div class="d-grid gap-2">
+                <%= f.submit "登録する", class: "btn btn-primary btn-lg" %>
+              </div>
+            <% end %>
+
+            <div class="text-center mt-4">
+              <%= render "devise/shared/links" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="field">
-    <%= f.label :username %><br />
-    <%= f.text_field :username, autocomplete: "username" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :display_name %><br />
-    <%= f.text_field :display_name, autocomplete: "name" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

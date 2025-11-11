@@ -34,24 +34,15 @@
               <% end %>
 
               <div class="mb-3">
-                <%= form.label :manga_title, "マンガタイトル", class: "form-label" %>
+                <%= form.label :manga_title, "マンガタイトル（必須）", class: "form-label" %>
                 <%= form.text_field :manga_title, class: "form-control", placeholder: "例: ONE PIECE" %>
               </div>
 
               <div class="mb-3">
-                <%= form.label :content, "投稿内容", class: "form-label" %>
+                <%= form.label :content, "投稿内容（必須）", class: "form-label" %>
                 <%= form.text_area :content, rows: 8, class: "form-control", 
-                    placeholder: "印象に残ったシーンやセリフ、そこから学んだことを書いてください..." %>
-                <div class="form-text">最低10文字以上入力してください</div>
-              </div>
-
-              <!-- 画像アップロード -->
-              <div class="mb-3">
-                <%= form.label :image, "画像（1枚、5MBまで）", class: "form-label" %>
-                <%= form.file_field :image, accept: "image/*", 
-                    class: "form-control", id: "image-upload" %>
-                <div class="form-text">マンガのシーンをアップロードできます（PNG, JPEG, GIF）</div>
-                <div id="image-preview" class="mt-2"></div>
+                    placeholder: "印象に残ったシーンやセリフ、そこから学んだことを書いてください...（50文字以上）" %>
+                <div class="form-text">グリット（やり抜く力）に関連する内容を書いてください</div>
               </div>
 
               <div class="mb-4">
@@ -61,7 +52,56 @@
                 <div class="form-text">関連するキーワードをカンマ区切りで入力してください</div>
               </div>
 
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <hr class="my-4">
+
+              <div class="mb-4">
+                <h5 class="mb-3">画像と出典情報（任意）</h5>
+                
+                <div class="alert alert-warning">
+                  <strong>⚠️ 著作権について</strong><br>
+                  画像をアップロードする場合は、著作権法第35条に基づき、<strong>1コマのみ</strong>アップロード可能です。<br>
+                  出典情報（著者名、出版社、巻数、ページ数）の入力が必須となります。
+                </div>
+
+                <%= form.label :image, "画像（1コマのみ、5MBまで）", class: "form-label" %>
+                <%= form.file_field :image, accept: "image/*", 
+                    class: "form-control", id: "image-upload" %>
+                <div id="image-preview" class="mt-2"></div>
+              </div>
+
+              <div id="copyright-fields" style="display: none;">
+                <h6 class="mb-3 text-danger">⚠️ 出典情報（画像アップロード時は必須）</h6>
+                
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <%= form.label :manga_author, "著者名（必須）", class: "form-label" %>
+                    <%= form.text_field :manga_author, class: "form-control", 
+                        placeholder: "例: 尾田栄一郎" %>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <%= form.label :manga_publisher, "出版社（必須）", class: "form-label" %>
+                    <%= form.text_field :manga_publisher, class: "form-control", 
+                        placeholder: "例: 集英社" %>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <%= form.label :manga_volume, "巻数（必須）", class: "form-label" %>
+                    <%= form.number_field :manga_volume, class: "form-control", 
+                        placeholder: "例: 1", min: 1 %>
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <%= form.label :manga_page, "ページ数（必須）", class: "form-label" %>
+                    <%= form.number_field :manga_page, class: "form-control", 
+                        placeholder: "例: 45", min: 1 %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                 <%= form.submit "投稿する", class: "btn btn-primary me-md-2" %>
                 <%= link_to "キャンセル", @genre, class: "btn btn-outline-secondary" %>
               </div>
@@ -75,6 +115,7 @@
   <script>
   document.getElementById('image-upload').addEventListener('change', function(e) {
     const preview = document.getElementById('image-preview');
+    const copyrightFields = document.getElementById('copyright-fields');
     preview.innerHTML = '';
     
     if (this.files && this.files[0]) {
@@ -83,8 +124,11 @@
       if (file.size > 5 * 1024 * 1024) {
         alert(file.name + ' は5MBを超えています');
         this.value = '';
+        copyrightFields.style.display = 'none';
         return;
       }
+
+      copyrightFields.style.display = 'block';
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -97,6 +141,8 @@
         preview.appendChild(img);
       }
       reader.readAsDataURL(file);
+    } else {
+      copyrightFields.style.display = 'none';
     }
   });
   </script>
