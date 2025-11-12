@@ -3,64 +3,279 @@
 <head>
   <title>マンガグリットプラットフォーム</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap CSS をCDN経由で読み込み -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <!-- ナビゲーションバー -->
-  <nav class="navbar navbar-light bg-light shadow-sm mb-4">
-    <div class="container">
-      <%= link_to root_path, class: "navbar-brand d-flex align-items-center text-decoration-none" do %>
-        <i class="bi bi-book-fill text-primary me-2" style="font-size: 1.5rem;"></i>
-        <span class="fw-bold">マンガグリットプラットフォーム</span>
-      <% end %>
-      <div class="d-flex align-items-center">
-        <span class="me-3 text-muted">ようこそ、<%= current_user.display_name %>さん</span>
+  <div class="container mt-4">
+    <!-- ヘッダー部分 -->
+    <div class="text-center mb-4">
+      <h1 class="display-4">マンガグリットプラットフォーム</h1>
+      
+      <!-- ユーザー情報とログアウト -->
+      <div class="text-end">
+        <span class="me-3">ようこそ、<%= current_user.display_name %>さん</span>
         <%= link_to mypage_path, class: "btn btn-outline-primary btn-sm me-2" do %>
           <i class="bi bi-person-circle"></i> マイページ
         <% end %>
-        <%= button_to destroy_user_session_path, 
+        <%= button_to "ログアウト", destroy_user_session_path, 
             method: :delete, 
-            class: "btn btn-outline-secondary btn-sm" do %>
-          <i class="bi bi-box-arrow-right"></i> ログアウト
-        <% end %>
+            class: "btn btn-outline-secondary btn-sm" %>
       </div>
     </div>
-  </nav>
 
-  <div class="container mt-4">
-    <!-- ジャンル選択画面 -->
+    <!-- ===== 1. ジャンル選択画面（一番上） ===== -->
     <div class="text-center mb-4">
-      <h2 class="mb-2">成長テーマ選択画面</h2>
+      <h2>成長テーマ選択画面</h2>
       <p class="text-muted">成長テーマを選択してください</p>
     </div>
 
-    <!-- ジャンルカード一覧 -->
-    <div class="row">
+    <div class="row g-4 mb-5">
       <% @genres.each do |genre| %>
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4">
           <%= link_to genre_path(genre), class: "text-decoration-none" do %>
             <div class="card h-100 shadow-sm hover-card">
               <div class="card-body text-center">
                 <h5 class="card-title text-primary"><%= genre.name %></h5>
                 <p class="card-text text-muted small"><%= genre.description %></p>
+                <!-- 投稿数表示 -->
+                <% posts_count = @genre_stats.find { |g| g.id == genre.id }&.posts_count || 0 %>
+                <span class="badge bg-primary">
+                  <i class="bi bi-file-text"></i> <%= posts_count %>件の投稿
+                </span>
               </div>
             </div>
           <% end %>
         </div>
       <% end %>
     </div>
+
+    <!-- ===== 2. 全体統計カード ===== -->
+    <h4 class="mb-3"><i class="bi bi-graph-up"></i> プラットフォーム統計</h4>
+    <div class="row g-3 mb-5">
+      <div class="col-md-3">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <i class="bi bi-file-text-fill text-primary" style="font-size: 2rem;"></i>
+            <h3 class="mt-2 mb-0"><%= @total_posts %></h3>
+            <p class="text-muted mb-0 small">総投稿数</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <i class="bi bi-people-fill text-success" style="font-size: 2rem;"></i>
+            <h3 class="mt-2 mb-0"><%= @total_users %></h3>
+            <p class="text-muted mb-0 small">参加ユーザー</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <i class="bi bi-chat-dots-fill text-info" style="font-size: 2rem;"></i>
+            <h3 class="mt-2 mb-0"><%= @total_comments %></h3>
+            <p class="text-muted mb-0 small">総コメント数</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <i class="bi bi-heart-fill text-danger" style="font-size: 2rem;"></i>
+            <h3 class="mt-2 mb-0"><%= @total_likes %></h3>
+            <p class="text-muted mb-0 small">総いいね数</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 3. 円グラフとタグ ===== -->
+    <div class="row g-4 mb-5">
+      <!-- ジャンル別投稿数（円グラフ） -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title mb-4">
+              <i class="bi bi-pie-chart-fill text-primary"></i> ジャンル別投稿数
+            </h5>
+            <div style="position: relative; height: 300px;">
+              <canvas id="genreChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 人気のタグ Top 10 -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title mb-4">
+              <i class="bi bi-tags-fill text-warning"></i> 人気のタグ Top 10
+            </h5>
+            <% if @top_tags.any? %>
+              <div class="d-flex flex-wrap gap-2">
+                <% @top_tags.each_with_index do |(tag, count), index| %>
+                  <% colors = ['primary', 'success', 'danger', 'warning', 'info', 'secondary', 'dark'] %>
+                  <% color = colors[index % colors.length] %>
+                  <span class="badge bg-<%= color %>" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    #<%= tag %> <span class="badge bg-light text-dark ms-1"><%= count %></span>
+                  </span>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-muted">まだタグが付けられていません</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 4. 最近の投稿 5件 ===== -->
+    <div class="card shadow-sm mb-5">
+      <div class="card-body">
+        <h5 class="card-title mb-4">
+          <i class="bi bi-clock-history text-info"></i> 最近の投稿
+        </h5>
+        <% if @recent_posts.any? %>
+          <div class="row g-3">
+            <% @recent_posts.each do |post| %>
+              <div class="col-md-12">
+                <%= link_to [post.genre, post], class: "text-decoration-none" do %>
+                  <div class="card border hover-card">
+                    <div class="card-body">
+                      <div class="d-flex align-items-start">
+                        <!-- サムネイル -->
+                        <div class="me-3">
+                          <% if post.image.attached? %>
+                            <%= image_tag url_for(post.image), 
+                                style: "width: 80px; height: 80px; object-fit: cover; border-radius: 0.5rem;" %>
+                          <% else %>
+                            <div class="d-flex align-items-center justify-content-center bg-light rounded" 
+                                 style="width: 80px; height: 80px;">
+                              <i class="bi bi-book text-muted" style="font-size: 2rem;"></i>
+                            </div>
+                          <% end %>
+                        </div>
+
+                        <!-- 投稿情報 -->
+                        <div class="flex-grow-1">
+                          <h6 class="mb-1"><%= post.manga_title %></h6>
+                          <p class="text-muted small mb-2">
+                            <%= truncate(post.content, length: 80) %>
+                          </p>
+                          <div class="d-flex align-items-center gap-3 small text-muted">
+                            <span>
+                              <i class="bi bi-person"></i> <%= post.user.display_name %>
+                            </span>
+                            <span>
+                              <i class="bi bi-folder"></i> <%= post.genre.name %>
+                            </span>
+                            <span>
+                              <i class="bi bi-heart-fill text-danger"></i> <%= post.likes_count %>
+                            </span>
+                            <span>
+                              <i class="bi bi-chat"></i> <%= post.comments.count %>
+                            </span>
+                            <span class="ms-auto">
+                              <%= post.created_at.strftime("%m/%d %H:%M") %>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-5">
+            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+            <p class="text-muted mt-3">まだ投稿がありません</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
   </div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===== Chart.js - 円グラフ描画 ===== -->
+  <script>
+    const ctx = document.getElementById('genreChart');
+    
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: <%= raw @genre_stats.map(&:name).to_json %>,
+        datasets: [{
+          label: '投稿数',
+          data: <%= raw @genre_stats.map { |g| g.posts_count || 0 }.to_json %>,
+          backgroundColor: [
+            'rgba(102, 126, 234, 0.8)',
+            'rgba(118, 75, 162, 0.8)',
+            'rgba(237, 100, 166, 0.8)',
+            'rgba(255, 154, 158, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(255, 206, 86, 0.8)'
+          ],
+          borderColor: [
+            'rgba(102, 126, 234, 1)',
+            'rgba(118, 75, 162, 1)',
+            'rgba(237, 100, 166, 1)',
+            'rgba(255, 154, 158, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 206, 86, 1)'
+          ],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 15,
+              font: {
+                size: 12
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                label += context.parsed + '件';
+                return label;
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+
   <!-- カードのホバー効果 -->
   <style>
+    .hover-card {
+      transition: transform 0.2s;
+    }
     .hover-card:hover {
       transform: translateY(-2px);
-      transition: transform 0.2s;
     }
   </style>
 </body>
