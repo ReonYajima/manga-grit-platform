@@ -4,6 +4,12 @@ class UsersController < ApplicationController
   def show
     @user = current_user
     
+    # デイリーミッション初期化（毎日実行）
+    @user.initialize_daily_missions!
+    
+    # ウィークリーミッション初期化（週初めに実行）
+    @user.initialize_weekly_missions!
+    
     # 自分の投稿（新しい順、ページネーション付き）
     @posts = @user.posts.includes(:genre, :likes, :comments)
                   .order(created_at: :desc)

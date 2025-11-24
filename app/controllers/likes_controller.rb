@@ -11,6 +11,9 @@ class LikesController < ApplicationController
       # まだいいねしていない場合は新規作成
       @like = @post.likes.build(user: current_user)
       if @like.save
+        # ポイント付与
+        PointService.award_for_like_create(@like)
+        
         redirect_to [@post.genre, @post], notice: 'いいねしました。'
       else
         redirect_to [@post.genre, @post], alert: 'いいねに失敗しました。'

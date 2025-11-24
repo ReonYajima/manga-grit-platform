@@ -9,23 +9,35 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <div class="container mt-4">
-    <!-- ヘッダー部分 -->
-    <div class="text-center mb-4">
-      <h1 class="display-4">マンガグリットプラットフォーム</h1>
+  <!-- ヘッダーナビゲーション -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
+    <div class="container-fluid">
+      <%= link_to root_path, class: "navbar-brand fw-bold text-primary" do %>
+        <i class="bi bi-book-fill me-2"></i>
+        マンガグリッド
+      <% end %>
       
-      <!-- ユーザー情報とログアウト -->
-      <div class="text-end">
-        <span class="me-3">ようこそ、<%= current_user.display_name %>さん</span>
+      <div class="d-flex align-items-center">
+        <!-- ポイント表示 -->
+        <%= link_to ranking_path, class: "text-decoration-none me-3" do %>
+          <span class="badge text-dark" style="font-size: 1.1rem; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+            <i class="bi bi-star-fill"></i>
+            <%= current_user.total_points %>pt
+          </span>
+        <% end %>
+        
         <%= link_to mypage_path, class: "btn btn-outline-primary btn-sm me-2" do %>
           <i class="bi bi-person-circle"></i> マイページ
         <% end %>
+        
         <%= button_to "ログアウト", destroy_user_session_path, 
             method: :delete, 
             class: "btn btn-outline-secondary btn-sm" %>
       </div>
     </div>
+  </nav>
 
+  <div class="container mt-4">
     <!-- ===== 1. ジャンル選択画面（一番上） ===== -->
     <div class="text-center mb-4">
       <h2>成長テーマ選択画面</h2>
@@ -96,7 +108,71 @@
       </div>
     </div>
 
-    <!-- ===== 3. 円グラフとタグ ===== -->
+    <!-- ===== 3. ランキング Top 5 ===== -->
+    <div class="card shadow-sm mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h5 class="text-white mb-0">
+            <i class="bi bi-trophy-fill text-warning"></i> ポイントランキング Top 5
+          </h5>
+          <%= link_to ranking_path, class: "btn btn-light btn-sm" do %>
+            全体ランキングを見る <i class="bi bi-arrow-right"></i>
+          <% end %>
+        </div>
+
+        <% if @top_users.any? %>
+          <div class="list-group">
+            <% @top_users.each_with_index do |user, index| %>
+              <div class="list-group-item d-flex justify-content-between align-items-center" 
+                   style="background: rgba(255,255,255,0.95); border: none; margin-bottom: 0.5rem; border-radius: 0.5rem;">
+                <div class="d-flex align-items-center">
+                  <!-- 順位バッジ -->
+                  <div class="me-3" style="width: 40px; text-align: center;">
+                    <% if index == 0 %>
+                      <span style="font-size: 1.8rem;">🥇</span>
+                    <% elsif index == 1 %>
+                      <span style="font-size: 1.8rem;">🥈</span>
+                    <% elsif index == 2 %>
+                      <span style="font-size: 1.8rem;">🥉</span>
+                    <% else %>
+                      <h5 class="mb-0 text-muted"><%= index + 1 %>位</h5>
+                    <% end %>
+                  </div>
+                  
+                  <!-- ユーザー情報 -->
+                  <div>
+                    <h6 class="mb-0">
+                      <%= user.display_name %>
+                      <% if user == current_user %>
+                        <span class="badge bg-primary">あなた</span>
+                      <% end %>
+                    </h6>
+                    <small class="text-muted">@<%= user.username %></small>
+                  </div>
+                </div>
+                
+                <!-- ポイント -->
+                <div class="text-end">
+                  <h4 class="mb-0" style="color: #FFD700;">
+                    <i class="bi bi-star-fill"></i>
+                    <%= number_with_delimiter(user.total_points) %>pt
+                  </h4>
+                  <small class="text-muted">
+                    投稿<%= user.posts.count %>件
+                  </small>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <p class="text-white mb-0">まだランキングに参加しているユーザーがいません</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- ===== 4. 円グラフとタグ ===== -->
     <div class="row g-4 mb-5">
       <!-- ジャンル別投稿数（円グラフ） -->
       <div class="col-lg-6">
@@ -137,7 +213,7 @@
       </div>
     </div>
 
-    <!-- ===== 4. 最近の投稿 5件 ===== -->
+    <!-- ===== 5. 最近の投稿 5件 ===== -->
     <div class="card shadow-sm mb-5">
       <div class="card-body">
         <h5 class="card-title mb-4">

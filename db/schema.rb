@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_10_050708) do
+ActiveRecord::Schema[7.1].define(version: 2025_11_24_000005) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -49,6 +49,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_10_050708) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
+  create_table "daily_missions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "mission_date", null: false
+    t.string "mission_type", null: false
+    t.boolean "completed", default: false
+    t.integer "progress", default: 0
+    t.integer "target", null: false
+    t.integer "reward_points", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mission_date"], name: "index_daily_missions_on_mission_date"
+    t.index ["user_id", "mission_date", "mission_type"], name: "index_daily_missions_unique", unique: true
+    t.index ["user_id"], name: "index_daily_missions_on_user_id"
+  end
+
   create_table "genres", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -63,6 +78,31 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_10_050708) do
     t.datetime "updated_at", null: false
     t.index ["post_id"], name: "index_likes_on_post_id"
     t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "login_logs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "login_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "login_at"], name: "index_login_logs_on_user_id_and_login_at"
+    t.index ["user_id"], name: "index_login_logs_on_user_id"
+  end
+
+  create_table "points", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "amount", default: 0, null: false
+    t.string "action_type", null: false
+    t.bigint "related_post_id"
+    t.bigint "related_comment_id"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action_type"], name: "index_points_on_action_type"
+    t.index ["created_at"], name: "index_points_on_created_at"
+    t.index ["related_comment_id"], name: "index_points_on_related_comment_id"
+    t.index ["related_post_id"], name: "index_points_on_related_post_id"
+    t.index ["user_id"], name: "index_points_on_user_id"
   end
 
   create_table "posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -112,17 +152,44 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_10_050708) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "terms_agreed_at"
+    t.integer "total_points", default: 0, null: false
+    t.integer "login_streak", default: 0, null: false
+    t.date "last_login_date"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["last_login_date"], name: "index_users_on_last_login_date"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["total_points"], name: "index_users_on_total_points"
+  end
+
+  create_table "weekly_missions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "week_number", null: false
+    t.date "week_start_date", null: false
+    t.string "mission_type", null: false
+    t.boolean "completed", default: false
+    t.integer "progress", default: 0
+    t.integer "target", null: false
+    t.integer "reward_points", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "week_number", "mission_type"], name: "index_weekly_missions_unique", unique: true
+    t.index ["user_id"], name: "index_weekly_missions_on_user_id"
+    t.index ["week_start_date"], name: "index_weekly_missions_on_week_start_date"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
+  add_foreign_key "daily_missions", "users"
   add_foreign_key "likes", "posts"
   add_foreign_key "likes", "users"
+  add_foreign_key "login_logs", "users"
+  add_foreign_key "points", "comments", column: "related_comment_id"
+  add_foreign_key "points", "posts", column: "related_post_id"
+  add_foreign_key "points", "users"
   add_foreign_key "posts", "genres"
   add_foreign_key "posts", "users"
   add_foreign_key "taggings", "tags"
+  add_foreign_key "weekly_missions", "users"
 end

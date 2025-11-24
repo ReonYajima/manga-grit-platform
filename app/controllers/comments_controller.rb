@@ -9,6 +9,9 @@ class CommentsController < ApplicationController
     @comment.user = current_user
 
     if @comment.save
+      # ポイント付与
+      PointService.award_for_comment_create(@comment)
+      
       # 保存成功時は投稿詳細画面にリダイレクト
       redirect_to [@post.genre, @post], notice: 'コメントが投稿されました。'
     else

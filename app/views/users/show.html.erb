@@ -19,7 +19,15 @@
         <i class="bi bi-book-fill me-2" style="font-size: 1.5rem;"></i>
         <span class="fw-bold">マンガグリットプラットフォーム</span>
       <% end %>
-      <div>
+      <div class="d-flex align-items-center">
+        <!-- ポイント表示 -->
+        <%= link_to ranking_path, class: "text-decoration-none me-3" do %>
+          <span class="badge text-dark" style="font-size: 1.2rem; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+            <i class="bi bi-star-fill"></i>
+            <%= @user.total_points %>pt
+          </span>
+        <% end %>
+        
         <%= link_to root_path, class: "btn btn-outline-light btn-sm" do %>
           <i class="bi bi-house"></i> ホーム
         <% end %>
@@ -43,34 +51,45 @@
   </div>
 
   <div class="container" style="margin-top: -50px; padding-bottom: 80px;">
-    <!-- 統計カード（3つ横並び） -->
+    <!-- 統計カード -->
     <div class="row g-3 mb-4">
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="card border-0 shadow-lg text-center py-4 hover-stat-card" style="background: white;">
           <div class="card-body">
             <div class="mb-2" style="font-size: 3rem;">📝</div>
-            <div class="display-3 fw-bold text-primary mb-2"><%= @total_posts %></div>
+            <div class="display-4 fw-bold text-primary mb-2"><%= @total_posts %></div>
             <h6 class="text-muted mb-0">投稿数</h6>
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="card border-0 shadow-lg text-center py-4 hover-stat-card" style="background: white;">
           <div class="card-body">
             <div class="mb-2" style="font-size: 3rem;">💬</div>
-            <div class="display-3 fw-bold text-success mb-2"><%= @total_comments_received %></div>
+            <div class="display-4 fw-bold text-success mb-2"><%= @total_comments_received %></div>
             <h6 class="text-muted mb-0">コメント数</h6>
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="card border-0 shadow-lg text-center py-4 hover-stat-card" style="background: white;">
           <div class="card-body">
             <div class="mb-2" style="font-size: 3rem;">❤️</div>
-            <div class="display-3 fw-bold text-danger mb-2"><%= @total_likes_received %></div>
+            <div class="display-4 fw-bold text-danger mb-2"><%= @total_likes_received %></div>
             <h6 class="text-muted mb-0">獲得いいね</h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-0 shadow-lg text-center py-4 hover-stat-card" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+          <div class="card-body">
+            <div class="mb-2" style="font-size: 3rem;">⭐</div>
+            <div class="display-4 fw-bold text-white mb-2"><%= @user.total_points %></div>
+            <h6 class="text-white mb-0">総合ポイント</h6>
+            <small class="text-white">ランキング: <%= @user.points_rank %>位</small>
           </div>
         </div>
       </div>
@@ -81,6 +100,16 @@
       <li class="nav-item" role="presentation">
         <button class="nav-link active rounded-3" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab">
           <i class="bi bi-file-text-fill"></i> 投稿一覧
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-3" id="points-tab" data-bs-toggle="tab" data-bs-target="#points" type="button" role="tab">
+          <i class="bi bi-star-fill"></i> ポイント履歴
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-3" id="missions-tab" data-bs-toggle="tab" data-bs-target="#missions" type="button" role="tab">
+          <i class="bi bi-trophy-fill"></i> ミッション
         </button>
       </li>
       <li class="nav-item" role="presentation">
@@ -154,7 +183,6 @@
             </div>
           <% end %>
         <% else %>
-          <!-- 空の状態 -->
           <div class="card border-0 shadow-lg" style="background: white;">
             <div class="card-body text-center py-5">
               <div class="mb-3" style="font-size: 5rem;">📭</div>
@@ -166,6 +194,153 @@
             </div>
           </div>
         <% end %>
+      </div>
+
+      <!-- ポイント履歴タブ -->
+      <div class="tab-pane fade" id="points" role="tabpanel">
+        <div class="card border-0 shadow-lg" style="background: white;">
+          <div class="card-body">
+            <h5 class="card-title mb-4">
+              <i class="bi bi-star-fill text-warning"></i>
+              ポイント獲得履歴
+            </h5>
+            
+            <!-- 今日と今週の獲得ポイント -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="alert alert-info">
+                  <strong>今日の獲得ポイント:</strong> +<%= @user.points_today %>pt
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="alert alert-success">
+                  <strong>今週の獲得ポイント:</strong> +<%= @user.points_this_week %>pt
+                </div>
+              </div>
+            </div>
+            
+            <!-- ポイント履歴リスト -->
+            <div class="list-group">
+              <% @user.points.recent.limit(20).each do |point| %>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong><%= point.action_type_name %></strong>
+                    <br>
+                    <small class="text-muted">
+                      <%= point.created_at.strftime('%Y/%m/%d %H:%M') %>
+                    </small>
+                    <% if point.description %>
+                      <br>
+                      <small><%= point.description %></small>
+                    <% end %>
+                  </div>
+                  <span class="badge bg-success rounded-pill" style="font-size: 1.1rem;">
+                    +<%= point.amount %>pt
+                  </span>
+                </div>
+              <% end %>
+            </div>
+            
+            <% if @user.points.none? %>
+              <p class="text-muted text-center mt-3">
+                まだポイントを獲得していません
+              </p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- ミッションタブ -->
+      <div class="tab-pane fade" id="missions" role="tabpanel">
+        <div class="row">
+          <!-- デイリーミッション -->
+          <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-lg">
+              <div class="card-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="mb-0">
+                  <i class="bi bi-calendar-check"></i>
+                  デイリーミッション
+                </h5>
+                <small>毎日23:59にリセット</small>
+              </div>
+              <div class="card-body">
+                <% @user.todays_missions.each do |mission| %>
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span>
+                        <% if mission.completed? %>
+                          <i class="bi bi-check-circle-fill text-success"></i>
+                        <% else %>
+                          <i class="bi bi-circle text-secondary"></i>
+                        <% end %>
+                        <%= mission.mission_name %>
+                      </span>
+                      <span class="badge bg-<%= mission.completed? ? 'success' : 'secondary' %>">
+                        +<%= mission.reward_points %>pt
+                      </span>
+                    </div>
+                    
+                    <!-- 進捗バー -->
+                    <div class="progress" style="height: 20px;">
+                      <div class="progress-bar <%= mission.completed? ? 'bg-success' : '' %>" 
+                           role="progressbar" 
+                           style="width: <%= mission.progress_percentage %>%"
+                           aria-valuenow="<%= mission.progress %>" 
+                           aria-valuemin="0" 
+                           aria-valuemax="<%= mission.target %>">
+                        <%= mission.progress %> / <%= mission.target %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- ウィークリーミッション -->
+          <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-lg">
+              <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                  <i class="bi bi-trophy"></i>
+                  ウィークリーミッション
+                </h5>
+                <small>毎週日曜23:59にリセット</small>
+              </div>
+              <div class="card-body">
+                <% @user.current_week_missions.each do |mission| %>
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span>
+                        <% if mission.completed? %>
+                          <i class="bi bi-check-circle-fill text-success"></i>
+                        <% else %>
+                          <i class="bi bi-circle text-secondary"></i>
+                        <% end %>
+                        <%= mission.mission_name %>
+                      </span>
+                      <span class="badge bg-<%= mission.completed? ? 'success' : 'secondary' %>">
+                        +<%= mission.reward_points %>pt
+                      </span>
+                    </div>
+                    
+                    <!-- 進捗バー -->
+                    <div class="progress" style="height: 20px;">
+                      <div class="progress-bar bg-success" 
+                           role="progressbar" 
+                           style="width: <%= mission.progress_percentage %>%"
+                           aria-valuenow="<%= mission.progress %>" 
+                           aria-valuemin="0" 
+                           aria-valuemax="<%= mission.target %>">
+                        <%= mission.progress %> / <%= mission.target %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- よく使うタグタブ -->

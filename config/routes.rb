@@ -14,6 +14,10 @@ Rails.application.routes.draw do
   # マイページ
   get 'mypage', to: 'users#show', as: 'mypage'
 
+  # ランキングページ
+  get 'ranking', to: 'ranking#index'
+
+
   # ジャンル関連のルーティング
   resources :genres, only: [ :index, :show ] do
     # ジャンル内での投稿関連ルーティング

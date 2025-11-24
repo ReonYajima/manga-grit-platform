@@ -25,6 +25,9 @@ class PostsController < ApplicationController
     @post.user = current_user
 
     if @post.save
+      # ポイント付与
+      PointService.award_for_post_create(@post)
+      
       # 保存成功時はジャンル画面にリダイレクト
       redirect_to @genre, notice: '投稿が作成されました。'
     else
@@ -89,15 +92,15 @@ class PostsController < ApplicationController
 
   # 投稿作成・更新で許可するパラメータ
   def post_params
-  params.require(:post).permit(
-    :manga_title, 
-    :content, 
-    :tag_list, 
-    :image,
-    :manga_author,
-    :manga_publisher,
-    :manga_volume,
-    :manga_page
-  )
+    params.require(:post).permit(
+      :manga_title, 
+      :content, 
+      :tag_list, 
+      :image,
+      :manga_author,
+      :manga_publisher,
+      :manga_volume,
+      :manga_page
+    )
   end
 end

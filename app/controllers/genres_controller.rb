@@ -1,16 +1,15 @@
 class GenresController < ApplicationController
-  # ジャンル一覧画面（トップページ）
   def index
-    # 全てのジャンルを取得してビューに渡す
     @genres = Genre.all
-
-
-     # 1. 全体統計
+    
+    # ===== トップページ用の統計データ =====
+    
+    # 1. 全体統計
     @total_posts = Post.count
     @total_users = User.count
     @total_comments = Comment.count
     @total_likes = Like.count
-
+    
     # 2. ジャンル別投稿数（円グラフ用）
     @genre_stats = Genre.left_joins(:posts)
                         .select('genres.*, COUNT(posts.id) as posts_count')
@@ -31,13 +30,18 @@ class GenresController < ApplicationController
     @recent_posts = Post.includes(:user, :genre, :likes, :comments)
                         .order(created_at: :desc)
                         .limit(5)
+    
+    # 5. ポイントランキング Top 5（追加）
+    @top_users = User.where('total_points > 0')
+                     .order(total_points: :desc)
+                     .includes(:posts)
+                     .limit(5)
   end
 
-  # 特定ジャンルの投稿一覧画面
   def show
-    # URLパラメータからジャンルを取得
     @genre = Genre.find(params[:id])
-    # そのジャンルの投稿を最新順で取得（ページネーション機能付き）
-    @posts = @genre.posts.includes(:user, :tags).order(created_at: :desc).page(params[:page]).per(10)
+    @posts = @genre.posts.includes(:user, :likes, :comments)
+                  .order(created_at: :desc)
+                  .page(params[:page]).per(12)
   end
 end

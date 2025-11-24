@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ランキング - マンガグリットプラットフォーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+  <!-- ヘッダーナビゲーション -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
+    <div class="container-fluid">
+      <%= link_to root_path, class: "navbar-brand fw-bold text-primary" do %>
+        <i class="bi bi-book-fill me-2"></i>
+        マンガグリッド
+      <% end %>
+      
+      <div class="d-flex align-items-center">
+        <!-- ポイント表示 -->
+        <%= link_to ranking_path, class: "text-decoration-none me-3" do %>
+          <span class="badge text-dark" style="font-size: 1.1rem; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+            <i class="bi bi-star-fill"></i>
+            <%= current_user.total_points %>pt
+          </span>
+        <% end %>
+        
+        <%= link_to mypage_path, class: "btn btn-outline-primary btn-sm me-2" do %>
+          <i class="bi bi-person-circle"></i> マイページ
+        <% end %>
+        
+        <%= button_to "ログアウト", destroy_user_session_path, 
+            method: :delete, 
+            class: "btn btn-outline-secondary btn-sm" %>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <!-- 戻るボタン（修正：ちゃんとしたボタンに） -->
+    <div class="mb-4">
+      <%= link_to root_path, class: "btn btn-outline-secondary" do %>
+        <i class="bi bi-arrow-left"></i> ホームに戻る
+      <% end %>
+    </div>
+
+    <!-- ===== ランキングタイトル ===== -->
+    <div class="text-center mb-5">
+      <h1 class="display-4">
+        <i class="bi bi-trophy-fill text-warning"></i>
+        ランキング
+      </h1>
+      <p class="text-muted">実験期間全体の累計ポイント</p>
+    </div>
+
+    <!-- ===== 実験終了後の報酬 ===== -->
+    <div class="card shadow-sm mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="card-body text-center py-4">
+        <h4 class="text-white mb-3">
+          <i class="bi bi-gift-fill"></i> 実験終了後の報酬
+        </h4>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="card bg-white">
+              <div class="card-body">
+                <h2 class="mb-2">🥇 1位</h2>
+                <h3 class="text-warning mb-0">QUOカード</h3>
+                <h4 class="text-primary">1,000円</h4>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card bg-white">
+              <div class="card-body">
+                <h2 class="mb-2">🥈 2位</h2>
+                <h3 class="text-warning mb-0">QUOカード</h3>
+                <h4 class="text-primary">500円</h4>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card bg-white">
+              <div class="card-body">
+                <h2 class="mb-2">🥉 3位</h2>
+                <h3 class="text-warning mb-0">QUOカード</h3>
+                <h4 class="text-primary">500円</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 総合ランキング ===== -->
+    <div class="card shadow-sm mb-5">
+      <div class="card-body">
+        <h4 class="card-title mb-4">
+          <i class="bi bi-bar-chart-fill text-primary"></i> 総合ランキング
+        </h4>
+
+        <% if @users.any? %>
+          <div class="list-group">
+            <% @users.each_with_index do |user, index| %>
+              <div class="list-group-item <%= 'bg-light' if user == current_user %>" 
+                   style="<%= 'border-left: 4px solid #0d6efd;' if user == current_user %>">
+                <div class="d-flex justify-content-between align-items-center">
+                  <!-- 左側：順位とユーザー情報 -->
+                  <div class="d-flex align-items-center">
+                    <!-- 順位バッジ -->
+                    <div class="me-3" style="width: 60px; text-align: center;">
+                      <% if index == 0 %>
+                        <span style="font-size: 2.5rem;">🥇</span>
+                      <% elsif index == 1 %>
+                        <span style="font-size: 2.5rem;">🥈</span>
+                      <% elsif index == 2 %>
+                        <span style="font-size: 2.5rem;">🥉</span>
+                      <% else %>
+                        <h4 class="mb-0 text-muted"><%= index + 1 %>位</h4>
+                      <% end %>
+                    </div>
+
+                    <!-- ユーザー情報 -->
+                    <div>
+                      <h5 class="mb-1">
+                        <%= user.display_name %>
+                        <% if user == current_user %>
+                          <span class="badge bg-primary">あなた</span>
+                        <% end %>
+                      </h5>
+                      <small class="text-muted">@<%= user.username %></small>
+                      <div class="mt-1">
+                        <span class="badge bg-secondary me-1">
+                          <i class="bi bi-file-text"></i> <%= user.posts.count %>投稿
+                        </span>
+                        <span class="badge bg-success me-1">
+                          <i class="bi bi-chat"></i> <%= Comment.where(post_id: user.posts.pluck(:id)).count %>コメント
+                        </span>
+                        <span class="badge bg-danger">
+                          <i class="bi bi-heart-fill"></i> <%= Like.where(post_id: user.posts.pluck(:id)).count %>いいね
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 右側：ポイント -->
+                  <div class="text-end">
+                    <h2 class="mb-0" style="color: #FFD700;">
+                      <i class="bi bi-star-fill"></i>
+                      <%= number_with_delimiter(user.total_points) %><small>pt</small>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-5">
+            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+            <p class="text-muted mt-3">まだランキングに参加しているユーザーがいません</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- あなたの順位（Top10外の場合） -->
+    <% if @current_user_rank && @current_user_rank > 10 %>
+      <div class="card shadow-sm mb-5 border-primary">
+        <div class="card-body">
+          <h5 class="card-title text-primary">
+            <i class="bi bi-person-circle"></i> あなたの順位
+          </h5>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="mb-0"><%= @current_user_rank %>位</h4>
+              <small class="text-muted"><%= current_user.display_name %></small>
+            </div>
+            <div class="text-end">
+              <h3 class="mb-0" style="color: #FFD700;">
+                <i class="bi bi-star-fill"></i>
+                <%= number_with_delimiter(current_user.total_points) %>pt
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- ポイント獲得のヒント -->
+    <div class="card shadow-sm mb-5 bg-light">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-lightbulb-fill text-warning"></i> ポイント獲得のヒント
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h6><i class="bi bi-check-circle-fill text-success"></i> デイリーミッション</h6>
+            <ul class="small mb-0">
+              <li>毎日ログイン: +5pt</li>
+              <li>1投稿する: +10pt</li>
+              <li>3コメントする: +10pt</li>
+              <li>5いいねする: +5pt</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h6><i class="bi bi-star-fill text-warning"></i> ウィークリーミッション</h6>
+            <ul class="small mb-0">
+              <li>3投稿する: +30pt</li>
+              <li>10コメントする: +20pt</li>
+              <li>20いいねする: +10pt</li>
+              <li>画像付き投稿2回: +20pt</li>
+              <li>3ジャンル制覇: +30pt</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
