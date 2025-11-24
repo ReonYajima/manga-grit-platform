@@ -46,7 +46,9 @@
 
               <div class="mb-4">
                 <%= form.label :tag_list, "タグ", class: "form-label" %>
-                <%= form.text_field :tag_list, class: "form-control", 
+                <%= form.text_field :tag_list, 
+                    value: @post.tag_list.join(", "),
+                    class: "form-control", 
                     placeholder: "例: 努力, 継続, 成長 (カンマで区切って入力)" %>
                 <div class="form-text">関連するキーワードをカンマ区切りで入力してください</div>
               </div>
