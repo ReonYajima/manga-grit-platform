@@ -39,5 +39,11 @@ class UsersController < ApplicationController
     
     # 登録日からの日数
     @days_since_signup = (Date.today - @user.created_at.to_date).to_i
+
+    # ===== 追加: スコア推移データ取得 =====
+    @pre_grit_score = @user.grit_scores.pre.first
+    @post_grit_score = @user.grit_scores.post.first
+    @pre_narrative_score = @user.narrative_scores.pre.first
+    @post_narrative_score = @user.narrative_scores.post.first
   end
 end

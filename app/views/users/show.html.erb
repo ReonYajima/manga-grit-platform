@@ -122,6 +122,11 @@
           <i class="bi bi-heart-fill"></i> いいねした投稿
         </button>
       </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-3" id="measurements-tab" data-bs-toggle="tab" data-bs-target="#measurements" type="button" role="tab">
+          <i class="bi bi-clipboard2-check"></i> 測定
+        </button>
+      </li>
     </ul>
 
     <!-- タブコンテンツ -->
@@ -419,6 +424,327 @@
               <%= link_to root_path, class: "btn btn-primary btn-lg rounded-pill px-4" do %>
                 <i class="bi bi-search"></i> 投稿を探す
               <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- 測定タブ -->
+      <div class="tab-pane fade" id="measurements" role="tabpanel">
+        <!-- グリット測定 -->
+        <div class="card shadow-sm mb-4" style="background: white;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0">
+                <i class="bi bi-clipboard2-check text-primary"></i>
+                グリット測定
+              </h5>
+              <% if @user.latest_grit_score %>
+                <span class="badge bg-success">測定済み</span>
+              <% else %>
+                <span class="badge bg-warning text-dark">未測定</span>
+              <% end %>
+            </div>
+
+            <% if @user.latest_grit_score %>
+              <% grit_score = @user.latest_grit_score %>
+              
+              <!-- スコア表示 -->
+              <div class="row text-center mb-3">
+                <div class="col-md-4">
+                  <div class="p-3 bg-light rounded">
+                    <div class="fs-2 fw-bold text-primary">
+                      <%= grit_score.total_score %>
+                    </div>
+                    <div class="small text-muted">総合スコア / 4.00</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-3 bg-light rounded">
+                    <div class="fs-4 fw-bold text-warning">
+                      <%= grit_score.consistency_score %>
+                    </div>
+                    <div class="small text-muted">興味の一貫性</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-3 bg-light rounded">
+                    <div class="fs-4 fw-bold text-danger">
+                      <%= grit_score.perseverance_score %>
+                    </div>
+                    <div class="small text-muted">努力の粘り強さ</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- プログレスバー -->
+              <div class="progress mb-3" style="height: 20px;">
+                <div class="progress-bar" 
+                     role="progressbar" 
+                     style="width: <%= (grit_score.total_score / 4.0 * 100).round %>%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);"
+                     aria-valuenow="<%= grit_score.total_score %>">
+                  <%= (grit_score.total_score / 4.0 * 100).round %>%
+                </div>
+              </div>
+
+              <p class="small text-muted mb-3">
+                最終測定日: <%= grit_score.created_at.strftime('%Y年%m月%d日') %>
+                (<%= grit_score.measurement_type_name %>)
+              </p>
+
+              <!-- 再測定ボタン -->
+              <% if @user.pre_measurement_completed? && !@user.post_measurement_completed? %>
+                <%= link_to new_grit_measurements_path(type: :post), class: "btn btn-primary" do %>
+                  <i class="bi bi-arrow-repeat"></i> 事後測定を受ける
+                <% end %>
+              <% elsif @user.post_measurement_completed? %>
+                <button class="btn btn-secondary" disabled>
+                  <i class="bi bi-check-circle"></i> 測定完了
+                </button>
+              <% end %>
+
+            <% else %>
+              <!-- 未測定の場合 -->
+              <p class="text-muted mb-3">
+                まだグリット測定を受けていません。あなたの「やり抜く力」を測定してみましょう！
+              </p>
+              <%= link_to new_grit_measurements_path(type: :pre), class: "btn btn-primary" do %>
+                <i class="bi bi-play-circle"></i> 事前測定を受ける
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- ナラティブ測定 -->
+        <div class="card shadow-sm mb-4" style="background: white;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0">
+                <i class="bi bi-book-half text-success"></i>
+                物語への移入度測定
+              </h5>
+              <% if @user.latest_narrative_score %>
+                <span class="badge bg-success">測定済み</span>
+              <% else %>
+                <span class="badge bg-warning text-dark">未測定</span>
+              <% end %>
+            </div>
+
+            <% if @user.latest_narrative_score %>
+              <% narrative_score = @user.latest_narrative_score %>
+              
+              <!-- スコア表示 -->
+              <div class="text-center mb-3">
+                <div class="p-4 bg-light rounded">
+                  <div class="fs-1 fw-bold text-success">
+                    <%= narrative_score.score %>
+                  </div>
+                  <div class="small text-muted">移入度スコア / 7.00</div>
+                </div>
+              </div>
+
+              <!-- プログレスバー -->
+              <div class="progress mb-3" style="height: 20px;">
+                <div class="progress-bar bg-success" 
+                     role="progressbar" 
+                     style="width: <%= (narrative_score.score / 7.0 * 100).round %>%;"
+                     aria-valuenow="<%= narrative_score.score %>">
+                  <%= (narrative_score.score / 7.0 * 100).round %>%
+                </div>
+              </div>
+
+              <p class="small text-muted mb-3">
+                最終測定日: <%= narrative_score.created_at.strftime('%Y年%m月%d日') %>
+                (<%= narrative_score.measurement_type_name %>)
+              </p>
+
+              <!-- 再測定ボタン -->
+              <% if @user.pre_measurement_completed? && !@user.post_measurement_completed? %>
+                <%= link_to new_narrative_measurements_path(type: :post), class: "btn btn-success" do %>
+                  <i class="bi bi-arrow-repeat"></i> 事後測定を受ける
+                <% end %>
+              <% elsif @user.post_measurement_completed? %>
+                <button class="btn btn-secondary" disabled>
+                  <i class="bi bi-check-circle"></i> 測定完了
+                </button>
+              <% end %>
+
+            <% else %>
+              <!-- 未測定の場合 -->
+              <p class="text-muted mb-3">
+                まだ物語への移入度測定を受けていません。マンガの物語世界への入り込み度を測定してみましょう！
+              </p>
+              <%= link_to new_narrative_measurements_path(type: :pre), class: "btn btn-success" do %>
+                <i class="bi bi-play-circle"></i> 事前測定を受ける
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- 測定の説明 -->
+        <div class="card shadow-sm border-info" style="background: white;">
+          <div class="card-body">
+            <h6 class="mb-3">
+              <i class="bi bi-info-circle text-info"></i>
+              測定について
+            </h6>
+            <ul class="small mb-0">
+              <li class="mb-2"><strong>事前測定:</strong> プラットフォーム利用開始時に実施</li>
+              <li class="mb-2"><strong>事後測定:</strong> 1ヶ月後に実施</li>
+              <li>各測定は1回のみ受けられます</li>
+            </ul>
+          </div>
+        </div>
+        <!-- スコア比較（事後測定完了後のみ表示） -->
+        <% if @user.post_measurement_completed? %>
+          <div class="card shadow-sm mt-4" style="background: white;">
+            <div class="card-body">
+              <h5 class="mb-4">
+                <i class="bi bi-graph-up-arrow text-primary"></i>
+                スコア推移
+              </h5>
+
+              <!-- グリットスコア推移 -->
+              <div class="mb-4">
+                <h6 class="mb-3">
+                  <i class="bi bi-clipboard2-check text-primary"></i>
+                  グリットスコア（やり抜く力）
+                </h6>
+                
+                <div class="row text-center">
+                  <!-- 事前 -->
+                  <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                      <div class="small text-muted mb-1">事前測定</div>
+                      <div class="fs-3 fw-bold text-primary"><%= @pre_grit_score.total_score %></div>
+                      <div class="small text-muted">
+                        <%= @pre_grit_score.created_at.strftime('%m/%d') %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 矢印 -->
+                  <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    <% change = @post_grit_score.total_score - @pre_grit_score.total_score %>
+                    <% if change > 0 %>
+                      <div class="text-center">
+                        <i class="bi bi-arrow-up-circle-fill fs-1 text-success"></i>
+                        <div class="fs-4 fw-bold text-success">+<%= change.round(2) %></div>
+                        <div class="small text-muted">向上しました！</div>
+                      </div>
+                    <% elsif change < 0 %>
+                      <div class="text-center">
+                        <i class="bi bi-arrow-down-circle-fill fs-1 text-warning"></i>
+                        <div class="fs-4 fw-bold text-warning"><%= change.round(2) %></div>
+                        <div class="small text-muted">変化</div>
+                      </div>
+                    <% else %>
+                      <div class="text-center">
+                        <i class="bi bi-dash-circle-fill fs-1 text-secondary"></i>
+                        <div class="fs-4 fw-bold text-secondary">0.00</div>
+                        <div class="small text-muted">変化なし</div>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <!-- 事後 -->
+                  <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                      <div class="small text-muted mb-1">事後測定</div>
+                      <div class="fs-3 fw-bold text-primary"><%= @post_grit_score.total_score %></div>
+                      <div class="small text-muted">
+                        <%= @post_grit_score.created_at.strftime('%m/%d') %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 詳細スコア比較 -->
+                <div class="row mt-3 text-center small">
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded">
+                      <div class="mb-1 text-muted">興味の一貫性</div>
+                      <div class="fw-bold">
+                        <%= @pre_grit_score.consistency_score %> → <%= @post_grit_score.consistency_score %>
+                        <% consistency_change = @post_grit_score.consistency_score - @pre_grit_score.consistency_score %>
+                        <span class="<%= consistency_change >= 0 ? 'text-success' : 'text-warning' %>">
+                          (<%= consistency_change >= 0 ? '+' : '' %><%= consistency_change.round(2) %>)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-2 bg-light rounded">
+                      <div class="mb-1 text-muted">努力の粘り強さ</div>
+                      <div class="fw-bold">
+                        <%= @pre_grit_score.perseverance_score %> → <%= @post_grit_score.perseverance_score %>
+                        <% perseverance_change = @post_grit_score.perseverance_score - @pre_grit_score.perseverance_score %>
+                        <span class="<%= perseverance_change >= 0 ? 'text-success' : 'text-warning' %>">
+                          (<%= perseverance_change >= 0 ? '+' : '' %><%= perseverance_change.round(2) %>)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr>
+
+              <!-- ナラティブスコア推移 -->
+              <div>
+                <h6 class="mb-3">
+                  <i class="bi bi-book-half text-success"></i>
+                  物語への移入度
+                </h6>
+                
+                <div class="row text-center">
+                  <!-- 事前 -->
+                  <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                      <div class="small text-muted mb-1">事前測定</div>
+                      <div class="fs-3 fw-bold text-success"><%= @pre_narrative_score.score %></div>
+                      <div class="small text-muted">
+                        <%= @pre_narrative_score.created_at.strftime('%m/%d') %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 矢印 -->
+                  <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    <% narrative_change = @post_narrative_score.score - @pre_narrative_score.score %>
+                    <% if narrative_change > 0 %>
+                      <div class="text-center">
+                        <i class="bi bi-arrow-up-circle-fill fs-1 text-success"></i>
+                        <div class="fs-4 fw-bold text-success">+<%= narrative_change.round(2) %></div>
+                        <div class="small text-muted">向上しました！</div>
+                      </div>
+                    <% elsif narrative_change < 0 %>
+                      <div class="text-center">
+                        <i class="bi bi-arrow-down-circle-fill fs-1 text-warning"></i>
+                        <div class="fs-4 fw-bold text-warning"><%= narrative_change.round(2) %></div>
+                        <div class="small text-muted">変化</div>
+                      </div>
+                    <% else %>
+                      <div class="text-center">
+                        <i class="bi bi-dash-circle-fill fs-1 text-secondary"></i>
+                        <div class="fs-4 fw-bold text-secondary">0.00</div>
+                        <div class="small text-muted">変化なし</div>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <!-- 事後 -->
+                  <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                      <div class="small text-muted mb-1">事後測定</div>
+                      <div class="fs-3 fw-bold text-success"><%= @post_narrative_score.score %></div>
+                      <div class="small text-muted">
+                        <%= @post_narrative_score.created_at.strftime('%m/%d') %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         <% end %>

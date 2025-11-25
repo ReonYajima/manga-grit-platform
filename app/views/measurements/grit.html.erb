@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>グリット測定 - 質問 <%= @current_question %> / <%= @questions.size %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    .question-card {
+      min-height: 400px;
+    }
+    .answer-option {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid #e9ecef;
+    }
+    .answer-option:hover {
+      border-color: #667eea;
+      background-color: #f8f9fa;
+      transform: translateY(-2px);
+    }
+    .answer-option input[type="radio"] {
+      cursor: pointer;
+    }
+    .progress-bar-custom {
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-10">
+        <!-- 進捗バー -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">
+              <i class="bi bi-clipboard2-check me-1"></i>
+              グリット測定
+            </span>
+            <span class="fw-bold">質問 <%= @current_question %> / <%= @questions.size %></span>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar progress-bar-custom" 
+                 role="progressbar" 
+                 style="width: <%= (@current_question.to_f / @questions.size * 100).round %>%"
+                 aria-valuenow="<%= @current_question %>" 
+                 aria-valuemin="0" 
+                 aria-valuemax="<%= @questions.size %>">
+            </div>
+          </div>
+          <div class="text-end mt-1">
+            <small class="text-muted">
+              あと<%= @questions.size - @current_question %>問
+            </small>
+          </div>
+        </div>
+
+        <!-- 質問カード -->
+        <div class="card shadow-lg border-0 question-card">
+          <div class="card-body p-5">
+            <% question = @questions[@current_question - 1] %>
+            
+            <!-- 質問文 -->
+            <div class="mb-5">
+              <h4 class="fw-bold mb-4" style="line-height: 1.8;">
+                <%= question[:text] %>
+              </h4>
+            </div>
+
+            <!-- 回答フォーム -->
+            <%= form_with url: grit_save_measurements_path, method: :post, local: true do |f| %>
+              <%= hidden_field_tag :question_id, question[:id] %>
+              <%= hidden_field_tag :type, @measurement_type %>
+              
+              <div class="d-grid gap-3">
+                <% @answer_options.each do |option| %>
+                  <label class="answer-option p-4 rounded d-flex align-items-center">
+                    <%= radio_button_tag :answer, option[:value], 
+                        session[:grit_answers]&.dig(question[:id].to_s) == option[:value],
+                        class: "form-check-input me-3 flex-shrink-0",
+                        style: "width: 24px; height: 24px;",
+                        required: true %>
+                    <span class="flex-grow-1">
+                      <strong><%= option[:value] %>.</strong>
+                      <%= option[:label] %>
+                    </span>
+                  </label>
+                <% end %>
+              </div>
+
+              <!-- ボタン -->
+              <div class="d-flex justify-content-between mt-5">
+                <% if @current_question > 1 %>
+                  <%= link_to grit_measurements_path(q: @current_question - 1, type: @measurement_type), 
+                      class: "btn btn-outline-secondary" do %>
+                    <i class="bi bi-arrow-left"></i> 前へ
+                  <% end %>
+                <% else %>
+                  <div></div>
+                <% end %>
+
+                <%= button_tag type: :submit, class: "btn btn-primary btn-lg px-5", 
+                    style: "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;" do %>
+                  <% if @current_question < @questions.size %>
+                    次へ <i class="bi bi-arrow-right"></i>
+                  <% else %>
+                    完了 <i class="bi bi-check-circle"></i>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- ヒント -->
+        <div class="text-center mt-4">
+          <small class="text-muted">
+            <i class="bi bi-lightbulb me-1"></i>
+            深く考えすぎず、直感で答えてください
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

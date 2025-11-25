@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>グリット測定 - マンガグリッドプラットフォーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+  <div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-8">
+        <!-- ヘッダー -->
+        <div class="text-center mb-4">
+          <%= link_to mypage_path, class: "btn btn-outline-secondary btn-sm" do %>
+            <i class="bi bi-arrow-left"></i> マイページに戻る
+          <% end %>
+        </div>
+
+        <!-- メインカード -->
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5">
+            <!-- アイコン -->
+            <div class="text-center mb-4">
+              <i class="bi bi-clipboard2-check text-primary" style="font-size: 4rem;"></i>
+            </div>
+
+            <!-- タイトル -->
+            <h2 class="text-center mb-4 fw-bold">グリット測定</h2>
+            
+            <!-- 説明 -->
+            <div class="alert alert-info mb-4">
+              <i class="bi bi-info-circle me-2"></i>
+              あなたの「やり抜く力（Grit）」を測定します。
+            </div>
+
+            <!-- 測定情報 -->
+            <div class="row text-center mb-4">
+              <div class="col-4">
+                <div class="p-3 bg-light rounded">
+                  <i class="bi bi-list-ol text-primary fs-3"></i>
+                  <div class="mt-2">
+                    <strong>12問</strong>
+                    <div class="small text-muted">質問数</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-3 bg-light rounded">
+                  <i class="bi bi-clock text-success fs-3"></i>
+                  <div class="mt-2">
+                    <strong>約3分</strong>
+                    <div class="small text-muted">所要時間</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-3 bg-light rounded">
+                  <i class="bi bi-bar-chart text-warning fs-3"></i>
+                  <div class="mt-2">
+                    <strong>4段階</strong>
+                    <div class="small text-muted">回答方式</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 注意事項 -->
+            <div class="card bg-light border-0 mb-4">
+              <div class="card-body">
+                <h6 class="mb-3"><i class="bi bi-exclamation-triangle text-warning me-2"></i>注意事項</h6>
+                <ul class="mb-0 small">
+                  <li>正直に答えてください</li>
+                  <li>深く考えすぎず、直感で答えてください</li>
+                  <li>全ての質問に回答してください</li>
+                  <li>途中でブラウザを閉じないでください</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- 開始ボタン -->
+            <div class="text-center">
+              <%= link_to grit_measurements_path(type: @measurement_type, q: 1), 
+                  class: "btn btn-primary btn-lg px-5", 
+                  style: "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;" do %>
+                <i class="bi bi-play-circle me-2"></i>
+                測定を開始する
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- フッター -->
+        <div class="text-center mt-4 text-muted small">
+          <p class="mb-0">日本語版グリット尺度（竹橋ら, 2015）</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

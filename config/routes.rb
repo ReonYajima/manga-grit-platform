@@ -29,4 +29,21 @@ Rails.application.routes.draw do
     resources :comments, only: [ :create, :destroy ]
     resources :likes, only: [ :create, :destroy ]
   end
+
+  # 測定機能
+  resources :measurements, only: [] do
+    collection do
+      # グリット測定
+      get 'grit/new', action: :new_grit, as: :new_grit
+      get 'grit', action: :grit
+      post 'grit/save', action: :save_grit_answer
+      get 'grit/result', action: :result_grit, as: :result_grit
+    
+      # ナラティブ測定
+      get 'narrative/new', action: :new_narrative, as: :new_narrative
+      get 'narrative', action: :narrative
+      post 'narrative/save', action: :save_narrative_answer
+      get 'narrative/result', action: :result_narrative, as: :result_narrative
+    end
+  end
 end

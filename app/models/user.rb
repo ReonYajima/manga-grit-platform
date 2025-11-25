@@ -13,6 +13,10 @@ class User < ApplicationRecord
   has_many :daily_missions, dependent: :destroy
   has_many :weekly_missions, dependent: :destroy
   has_many :login_logs, dependent: :destroy
+
+   # 測定関連のアソシエーション
+  has_many :grit_scores, dependent: :destroy
+  has_many :narrative_scores, dependent: :destroy
   
   # バリデーション
   validates :username, presence: true, uniqueness: true
@@ -97,6 +101,26 @@ class User < ApplicationRecord
   # ウィークリーミッションの初期化（週初めに実行）
   def initialize_weekly_missions!
     WeeklyMission.find_or_create_current_week_missions(self)
+  end
+
+  # 最新のグリットスコア
+  def latest_grit_score
+    grit_scores.order(created_at: :desc).first
+  end
+
+  # 最新の物語への移入スコア
+  def latest_narrative_score
+    narrative_scores.order(created_at: :desc).first
+  end
+
+  # 事前測定済みか
+  def pre_measurement_completed?
+    grit_scores.pre.exists? && narrative_scores.pre.exists?
+  end
+
+  # 事後測定済みか
+  def post_measurement_completed?
+    grit_scores.post.exists? && narrative_scores.post.exists?
   end
   
   # ===== private メソッド =====

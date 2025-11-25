@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_24_000005) do
+ActiveRecord::Schema[7.1].define(version: 2025_11_24_132314) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -71,6 +71,20 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_24_000005) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "grit_scores", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "total_score", precision: 4, scale: 2, null: false
+    t.decimal "consistency_score", precision: 4, scale: 2
+    t.decimal "perseverance_score", precision: 4, scale: 2
+    t.integer "measurement_type", default: 0, null: false
+    t.json "answers"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_grit_scores_on_created_at"
+    t.index ["user_id", "measurement_type"], name: "index_grit_scores_on_user_id_and_measurement_type", unique: true
+    t.index ["user_id"], name: "index_grit_scores_on_user_id"
+  end
+
   create_table "likes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "post_id", null: false
@@ -87,6 +101,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_24_000005) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "login_at"], name: "index_login_logs_on_user_id_and_login_at"
     t.index ["user_id"], name: "index_login_logs_on_user_id"
+  end
+
+  create_table "narrative_scores", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "score", precision: 4, scale: 2, null: false
+    t.integer "measurement_type", default: 0, null: false
+    t.json "answers"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_narrative_scores_on_created_at"
+    t.index ["user_id", "measurement_type"], name: "index_narrative_scores_on_user_id_and_measurement_type", unique: true
+    t.index ["user_id"], name: "index_narrative_scores_on_user_id"
   end
 
   create_table "points", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -182,9 +208,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_24_000005) do
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "daily_missions", "users"
+  add_foreign_key "grit_scores", "users"
   add_foreign_key "likes", "posts"
   add_foreign_key "likes", "users"
   add_foreign_key "login_logs", "users"
+  add_foreign_key "narrative_scores", "users"
   add_foreign_key "points", "comments", column: "related_comment_id"
   add_foreign_key "points", "posts", column: "related_post_id"
   add_foreign_key "points", "users"
