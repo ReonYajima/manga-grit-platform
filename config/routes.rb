@@ -17,7 +17,6 @@ Rails.application.routes.draw do
   # ランキングページ
   get 'ranking', to: 'ranking#index'
 
-
   # ジャンル関連のルーティング
   resources :genres, only: [ :index, :show ] do
     # ジャンル内での投稿関連ルーティング
@@ -45,5 +44,35 @@ Rails.application.routes.draw do
       post 'narrative/save', action: :save_narrative_answer
       get 'narrative/result', action: :result_narrative, as: :result_narrative
     end
+  end
+
+  # 管理画面
+  namespace :admin do
+    # ログイン関連
+    get 'login', to: 'sessions#new'
+    post 'login', to: 'sessions#create'
+    delete 'logout', to: 'sessions#destroy'
+    
+    # ダッシュボード
+    get 'dashboard', to: 'dashboard#index'
+    
+    # CSV出力画面
+    get 'exports', to: 'exports#index'
+    
+    # 個別CSV出力
+    post 'exports/users_stats', to: 'exports#users_stats'
+    post 'exports/grit_scores', to: 'exports#grit_scores'
+    post 'exports/narrative_scores', to: 'exports#narrative_scores'
+    post 'exports/posts', to: 'exports#posts'
+    post 'exports/comments', to: 'exports#comments'
+    post 'exports/likes', to: 'exports#likes'
+    post 'exports/point_logs', to: 'exports#point_logs'
+    post 'exports/daily_missions', to: 'exports#daily_missions'
+    post 'exports/weekly_missions', to: 'exports#weekly_missions'
+    post 'exports/login_logs', to: 'exports#login_logs'
+    post 'exports/tag_usage', to: 'exports#tag_usage'
+    
+    # 全CSV一括出力
+    post 'exports/all', to: 'exports#export_all'
   end
 end

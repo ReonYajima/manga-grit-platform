@@ -1,0 +1,247 @@
+<div class="text-center mb-4">
+  <h1 class="text-white">
+    <i class="bi bi-file-earmark-spreadsheet"></i>
+    CSV出力
+  </h1>
+  <p class="text-white">データ分析用にCSVファイルをダウンロードできます</p>
+</div>
+
+<!-- 一括出力 -->
+<div class="admin-card">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">
+      <i class="bi bi-download"></i>
+      全データ一括出力
+    </h3>
+    <%= button_to "/admin/exports/all", method: :post, class: "btn btn-success btn-lg" do %>
+      <i class="bi bi-file-earmark-zip-fill"></i>
+      全CSVファイルをZIPでダウンロード
+    <% end %>
+  </div>
+  <p class="text-muted">
+    <i class="bi bi-info-circle"></i>
+    11種類のCSVファイルをZIP形式で一括ダウンロードできます。
+  </p>
+</div>
+
+<!-- 個別出力 -->
+<div class="admin-card">
+  <h3 class="mb-4">
+    <i class="bi bi-list-ul"></i>
+    個別CSV出力
+  </h3>
+  
+  <div class="row g-3">
+    <!-- 1. ユーザー基本統計 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-people-fill text-primary"></i>
+            ユーザー基本統計
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、表示名、登録日、投稿数、コメント数、いいね数、ログイン日数、総ポイント、ミッション達成回数
+          </p>
+          <%= button_to "/admin/exports/users_stats", method: :post, class: "btn btn-primary w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 2. グリットスコア推移 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-graph-up text-success"></i>
+            グリットスコア推移
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、測定日時、グリットスコア、興味の一貫性、努力の粘り強さ、測定回数
+          </p>
+          <%= button_to "/admin/exports/grit_scores", method: :post, class: "btn btn-success w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 3. ナラティブスコア推移 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-book text-info"></i>
+            ナラティブスコア推移
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、測定日時、ナラティブスコア、測定回数
+          </p>
+          <%= button_to "/admin/exports/narrative_scores", method: :post, class: "btn btn-info w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 4. 投稿詳細 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-file-earmark-text text-warning"></i>
+            投稿詳細
+          </h5>
+          <p class="card-text text-muted small">
+            投稿ID、投稿者、マンガタイトル、ジャンル、投稿日時、画像有無、タグ、文字数、いいね数、コメント数、出典情報
+          </p>
+          <%= button_to "/admin/exports/posts", method: :post, class: "btn btn-warning w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 5. コメント詳細 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-chat-fill text-secondary"></i>
+            コメント詳細
+          </h5>
+          <p class="card-text text-muted small">
+            コメントID、投稿ID、コメント者、投稿者、日時、文字数
+          </p>
+          <%= button_to "/admin/exports/comments", method: :post, class: "btn btn-secondary w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 6. いいね詳細 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-heart-fill text-danger"></i>
+            いいね詳細
+          </h5>
+          <p class="card-text text-muted small">
+            いいねID、投稿ID、いいねした人、投稿者、日時
+          </p>
+          <%= button_to "/admin/exports/likes", method: :post, class: "btn btn-danger w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 7. ポイント獲得履歴 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-star-fill text-warning"></i>
+            ポイント獲得履歴
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、日時、行動種別、獲得ポイント、累計ポイント、説明
+          </p>
+          <%= button_to "/admin/exports/point_logs", method: :post, class: "btn btn-warning w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 8. デイリーミッション達成履歴 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-calendar-check text-primary"></i>
+            デイリーミッション達成履歴
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、日付、ミッション内容、達成状態、進捗、目標、ボーナスポイント
+          </p>
+          <%= button_to "/admin/exports/daily_missions", method: :post, class: "btn btn-primary w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 9. ウィークリーミッション達成履歴 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-calendar-week text-success"></i>
+            ウィークリーミッション達成履歴
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、週番号、週開始日、ミッション内容、達成状態、進捗、目標、ボーナスポイント
+          </p>
+          <%= button_to "/admin/exports/weekly_missions", method: :post, class: "btn btn-success w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 10. ログイン履歴 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-clock-history text-info"></i>
+            ログイン履歴
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、日時、曜日、時間帯
+          </p>
+          <%= button_to "/admin/exports/login_logs", method: :post, class: "btn btn-info w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 11. タグ使用履歴 -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-tags-fill text-secondary"></i>
+            タグ使用履歴
+          </h5>
+          <p class="card-text text-muted small">
+            ユーザー名、タグ名、使用回数
+          </p>
+          <%= button_to "/admin/exports/tag_usage", method: :post, class: "btn btn-secondary w-100" do %>
+            <i class="bi bi-download"></i> ダウンロード
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 注意事項 -->
+<div class="admin-card">
+  <h5>
+    <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+    注意事項
+  </h5>
+  <ul class="text-muted">
+    <li>CSVファイルは <strong>UTF-8エンコーディング</strong> で出力されます。</li>
+    <li>Excelで開く際は、データタブから「テキストファイル」として読み込んでください。</li>
+    <li>大量のデータがある場合、ダウンロードに時間がかかることがあります。</li>
+    <li>個人情報が含まれますので、取り扱いには十分注意してください。</li>
+  </ul>
+</div>

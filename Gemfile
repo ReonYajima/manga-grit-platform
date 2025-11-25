@@ -45,6 +45,7 @@ gem "bootsnap", require: false
 gem 'devise'                # ユーザー認証
 gem 'acts-as-taggable-on'   # タグ機能
 gem 'kaminari'              # ページネーション
+gem 'rubyzip'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"

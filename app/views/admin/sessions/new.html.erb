@@ -1,0 +1,29 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="admin-card">
+      <div class="text-center mb-4">
+        <i class="bi bi-shield-lock-fill text-primary" style="font-size: 4rem;"></i>
+        <h2 class="mt-3">管理画面ログイン</h2>
+        <p class="text-muted">パスワードを入力してください</p>
+      </div>
+
+      <%= form_with url: admin_login_path, method: :post, local: true do |form| %>
+        <div class="mb-3">
+          <%= form.label :password, "パスワード", class: "form-label" %>
+          <%= form.password_field :password, class: "form-control form-control-lg", 
+              placeholder: "パスワードを入力", autofocus: true, required: true %>
+        </div>
+
+        <div class="d-grid">
+          <%= form.submit "ログイン", class: "btn btn-primary btn-lg" %>
+        </div>
+      <% end %>
+
+      <div class="text-center mt-4">
+        <%= link_to root_path, class: "text-muted text-decoration-none" do %>
+          <i class="bi bi-arrow-left"></i> トップページに戻る
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

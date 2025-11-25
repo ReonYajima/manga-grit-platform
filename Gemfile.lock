@@ -293,6 +293,7 @@ DEPENDENCIES
   mysql2 (~> 0.5)
   puma (>= 5.0)
   rails (~> 7.1.5, >= 7.1.5.2)
+  rubyzip
   selenium-webdriver
   sprockets-rails
   stimulus-rails

@@ -1,0 +1,193 @@
+<div class="text-center mb-4">
+  <h1 class="text-white">
+    <i class="bi bi-speedometer2"></i>
+    ダッシュボード
+  </h1>
+  <p class="text-white">プラットフォームの統計情報</p>
+</div>
+
+<!-- 基本統計 -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card">
+      <h3><%= @total_users %></h3>
+      <p><i class="bi bi-people-fill"></i> 総ユーザー数</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <h3><%= @total_posts %></h3>
+      <p><i class="bi bi-file-earmark-text-fill"></i> 総投稿数</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <h3><%= @total_comments %></h3>
+      <p><i class="bi bi-chat-fill"></i> 総コメント数</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <h3><%= @total_likes %></h3>
+      <p><i class="bi bi-heart-fill"></i> 総いいね数</p>
+    </div>
+  </div>
+</div>
+
+<!-- ポイント統計 -->
+<div class="row g-3 mb-4">
+  <div class="col-md-12">
+    <div class="stat-card">
+      <h3><%= @total_points.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></h3>
+      <p><i class="bi bi-star-fill"></i> 総ポイント数</p>
+    </div>
+  </div>
+</div>
+
+<!-- 測定完了率 -->
+<div class="admin-card">
+  <h3 class="mb-4">
+    <i class="bi bi-clipboard-data"></i>
+    測定完了状況
+  </h3>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <h5>グリット測定</h5>
+      <div class="mb-3">
+        <div class="d-flex justify-content-between mb-1">
+          <span>事前測定</span>
+          <span><strong><%= @pre_grit_completed %></strong> / <%= @total_users %> 人</span>
+        </div>
+        <div class="progress" style="height: 25px;">
+          <div class="progress-bar bg-primary" 
+               style="width: <%= (@pre_grit_completed.to_f / @total_users * 100).round %>%">
+            <%= (@pre_grit_completed.to_f / @total_users * 100).round %>%
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-3">
+        <div class="d-flex justify-content-between mb-1">
+          <span>事後測定</span>
+          <span><strong><%= @post_grit_completed %></strong> / <%= @total_users %> 人</span>
+        </div>
+        <div class="progress" style="height: 25px;">
+          <div class="progress-bar bg-success" 
+               style="width: <%= (@post_grit_completed.to_f / @total_users * 100).round %>%">
+            <%= (@post_grit_completed.to_f / @total_users * 100).round %>%
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <h5>ナラティブ測定</h5>
+      <div class="mb-3">
+        <div class="d-flex justify-content-between mb-1">
+          <span>事前測定</span>
+          <span><strong><%= @pre_narrative_completed %></strong> / <%= @total_users %> 人</span>
+        </div>
+        <div class="progress" style="height: 25px;">
+          <div class="progress-bar bg-info" 
+               style="width: <%= (@pre_narrative_completed.to_f / @total_users * 100).round %>%">
+            <%= (@pre_narrative_completed.to_f / @total_users * 100).round %>%
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-3">
+        <div class="d-flex justify-content-between mb-1">
+          <span>事後測定</span>
+          <span><strong><%= @post_narrative_completed %></strong> / <%= @total_users %> 人</span>
+        </div>
+        <div class="progress" style="height: 25px;">
+          <div class="progress-bar bg-warning" 
+               style="width: <%= (@post_narrative_completed.to_f / @total_users * 100).round %>%">
+            <%= (@post_narrative_completed.to_f / @total_users * 100).round %>%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 上位ユーザー -->
+<div class="admin-card">
+  <h3 class="mb-4">
+    <i class="bi bi-trophy-fill"></i>
+    ポイントランキング Top 10
+  </h3>
+  
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>順位</th>
+          <th>ユーザー名</th>
+          <th>表示名</th>
+          <th class="text-end">総ポイント</th>
+          <th class="text-end">投稿数</th>
+          <th class="text-end">コメント数</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @top_users.each_with_index do |user, index| %>
+          <tr>
+            <td>
+              <% if index == 0 %>
+                <span class="badge bg-warning">🥇 1位</span>
+              <% elsif index == 1 %>
+                <span class="badge bg-secondary">🥈 2位</span>
+              <% elsif index == 2 %>
+                <span class="badge" style="background: #cd7f32;">🥉 3位</span>
+              <% else %>
+                <%= index + 1 %>位
+              <% end %>
+            </td>
+            <td><code><%= user.username %></code></td>
+            <td><%= user.display_name %></td>
+            <td class="text-end"><strong><%= user.total_points %></strong> pt</td>
+            <td class="text-end"><%= user.posts.count %></td>
+            <td class="text-end"><%= user.comments.count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 最近の投稿 -->
+<div class="admin-card">
+  <h3 class="mb-4">
+    <i class="bi bi-clock-history"></i>
+    最近の投稿
+  </h3>
+  
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>投稿日時</th>
+          <th>投稿者</th>
+          <th>マンガタイトル</th>
+          <th>ジャンル</th>
+          <th class="text-end">いいね</th>
+          <th class="text-end">コメント</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_posts.each do |post| %>
+          <tr>
+            <td><%= post.created_at.strftime('%m/%d %H:%M') %></td>
+            <td><code><%= post.user.username %></code></td>
+            <td><%= truncate(post.manga_title, length: 30) %></td>
+            <td><span class="badge bg-primary"><%= post.genre.name %></span></td>
+            <td class="text-end"><%= post.likes.count %></td>
+            <td class="text-end"><%= post.comments.count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
