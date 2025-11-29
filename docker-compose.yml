@@ -2,6 +2,7 @@ services:
   app:
     build: .
     image: manga-grit-platform:latest
+    restart: always
     command: bundle exec rails server -b 0.0.0.0 -p 3000
     environment:
       - RAILS_ENV=development
@@ -21,6 +22,7 @@ services:
   db:
     image: mysql:8.0
     restart: always
+    command: --max_connections=200
     environment:
       MYSQL_ROOT_PASSWORD: StrongRootPassword123!
       MYSQL_DATABASE: manga_grit_platform_development
@@ -35,6 +37,7 @@ services:
 
   nginx:
     image: nginx:1.24-alpine
+    restart: always
     ports:
       - "80:80"
     depends_on:
