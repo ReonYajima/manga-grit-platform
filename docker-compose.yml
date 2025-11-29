@@ -22,7 +22,7 @@ services:
   db:
     image: mysql:8.0
     restart: always
-    command: --max_connections=200
+    command: --max_connections=100
     environment:
       MYSQL_ROOT_PASSWORD: StrongRootPassword123!
       MYSQL_DATABASE: manga_grit_platform_development
